@@ -37,7 +37,13 @@ func main() {
 	logger.RegisterSink(lager.NewWriterSink(os.Stderr, lager.DEBUG))
 
 	var request CheckRequest
-	err := json.NewDecoder(os.Stdin).Decode(&request)
+
+	file, err := os.Open("json")
+	if err != nil {
+		panic(err)
+	}
+
+	err = json.NewDecoder(file).Decode(&request)
 	fatalIf("failed to read request", err)
 
 	os.Setenv("AWS_ACCESS_KEY_ID", request.Source.AWSAccessKeyID)
@@ -194,7 +200,7 @@ func makeTransport(logger lager.Logger, request CheckRequest, registryHost strin
 
 	pingClient := &http.Client{
 		Transport: retryRoundTripper(logger, authTransport),
-		Timeout: 1 * time.Minute,
+		Timeout:   1 * time.Minute,
 	}
 
 	challengeManager := auth.NewSimpleChallengeManager()
