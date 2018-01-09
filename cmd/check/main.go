@@ -114,6 +114,7 @@ func fetchDigest(client *http.Client, manifestURL string) (string, bool) {
 	manifestRequest, err := http.NewRequest("GET", manifestURL, nil)
 	fatalIf("failed to build manifest request", err)
 	manifestRequest.Header.Add("Accept", "application/vnd.docker.distribution.manifest.v2+json")
+	manifestRequest.Header.Add("Accept", "application/vnd.docker.distribution.manifest.v1+prettyjws")
 	manifestRequest.Header.Add("Accept", "application/json")
 
 	manifestResponse, err := client.Do(manifestRequest)
